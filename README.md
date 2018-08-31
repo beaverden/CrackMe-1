@@ -103,6 +103,14 @@ So now when we solved the script, what happens with it?
 2. Then we `CreateProcess("C:\\Python27\\python.exe -u snake", ...)` with `stdin` and `stdout` redirected to pipes.
 3. We write some data to `stdin` and then read some data from `stdout`.
 4. Obviously, we feed some data to the `bz2 decoder` though interprocess communication.
+5. The data being fed is insinde `payload.h` and is a `bz2` encoded `Native Kernel Driver`.
+6. The original uncompressed driver is located inside `Build/Driver.sys`
+7. We drop the driver inside `%temp%/sunca`, which is romanian for `ham` :)
+8. Using `OpenSCManager`, `OpenService`, `CreateService`, `StartService` we create and start a service for our driver called `Salam` which is romanian for `salami` :) 
+9. After loading, we wait 30 seconds
+10. Then we try to read a suspicious file `C:\\suc` (supposedly created by the driver) and then try to decrypt the resource we got with `LockResource` using the contents of the file as `RC4` key. (Preventively `VirtualProtect`-ing the resource, which is `readonly`
 
+We then return to the main function and drop the resource under the name `sefu labani.bmp`.
 
+So, it remains to find out what this `salam` driver does and what it writes to the `C:\\suc` file
 

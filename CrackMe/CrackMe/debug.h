@@ -3,7 +3,7 @@
 #define __DEBUG__
 
 #include <Windows.h>
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
     void WINAPIV DebugOut(const char *fmt, ...);

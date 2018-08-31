@@ -3,6 +3,7 @@
 
 #define DECOMPRESSED_SIZE 20000
 #define DIGIT(x,t) (x-'0')*t  
+#define ROL(x, n) ((x) = ((x << n) | (x >> (sizeof(x)*CHAR_BIT-n))))
 
 #pragma function(memset)
 void * __cdecl memset(void *pTarget, int value, size_t cbTarget) {

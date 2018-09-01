@@ -117,6 +117,9 @@
     <PostBuildEvent>
       <Command>python "D:\Google Drive\Programming\C++\CrackMe\CrackMe\Prepare\prepare.py" "$(OutputPath)$(TargetFileName)"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>python "D:\Google Drive\Programming\C++\CrackMe\CrackMe\Payload\enconde.py"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

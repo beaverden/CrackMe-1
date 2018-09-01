@@ -17,7 +17,7 @@ pe.sections[3].Name = 'DRS 0_0'
 IMAGE_SCN_MEM_WRITE = 0x80000000
 pe.sections[0].Characteristics |= IMAGE_SCN_MEM_WRITE
 
-out_file = os.path.join(os.path.dirname(sys.argv[1]), 'CrackMe #1.exe$')
+out_file = os.path.join(os.path.dirname(sys.argv[1]), 'CrackMe#1.exe$')
 pe.write(out_file)
 pe.close()
 

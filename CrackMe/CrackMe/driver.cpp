@@ -33,7 +33,7 @@ BOOLEAN InstallService(LPCSTR lpBinaryPath)
         "Salam",
         SERVICE_ALL_ACCESS,
         SERVICE_KERNEL_DRIVER,
-        SERVICE_AUTO_START,
+        SERVICE_DEMAND_START,
         SERVICE_ERROR_CRITICAL,
         lpBinaryPath,
         NULL,

@@ -115,10 +115,10 @@
       <DocumentLibraryDependencies>false</DocumentLibraryDependencies>
     </Xdcmake>
     <PostBuildEvent>
-      <Command>python "D:\Google Drive\Programming\C++\CrackMe\CrackMe\Prepare\prepare.py" "$(OutputPath)$(TargetFileName)"</Command>
+      <Command>python "$(SolutionDir)Prepare\prepare.py" "$(OutDir)$(TargetFileName)" "$(SolutionDir)..\Build\$(TargetFileName)"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>python "D:\Google Drive\Programming\C++\CrackMe\CrackMe\Payload\enconde.py"</Command>
+      <Command>python "$(SolutionDir)Payload\enconde.py"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
